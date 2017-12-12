@@ -1,7 +1,9 @@
 // @flow
+import { Player1, Player2 } from '../Constants'
 
 type SwitchPlayer = Player => Player
-export const switchPlayer: SwitchPlayer = player => (player === 0 ? 1 : 0)
+export const switchPlayer: SwitchPlayer = player =>
+  player === Player1 ? Player2 : Player1
 
 type ToFlatList = (list: BoardType) => Array<CellType>
 const toFlatList: ToFlatList = list =>
@@ -14,14 +16,14 @@ const toBoard: ToBoard = ([c1, c2, c3, c4, c5, c6, c7, c8, c9]) => [
   [c7, c8, c9],
 ]
 
-// Assumes Player 0 is 'X', and Player 1 is 'O'
+// Assumes Player1 is 'X', and Player2 is 'O'
 type UpdateCell = (BoardType, Player, BoardIndex) => BoardType
 export const updateCell: UpdateCell = (board, player, index) => {
   const cells = toFlatList(board)
   const cell = cells[index]
   if (cell && cell.type === 'Empty') {
     const updatedCell: Circle | Cross =
-      player === 0 ? { type: 'Cross' } : { type: 'Circle' }
+      player === Player1 ? { type: 'Cross' } : { type: 'Circle' }
     return toBoard([
       ...cells.slice(0, index),
       updatedCell,
@@ -42,6 +44,7 @@ type IsFinished = (board: BoardType) => boolean
 export const isFinished: IsFinished = board =>
   toFlatList(board).every(cell => cell.type !== 'Empty')
 
+// Extract the cells from the board at the given indices
 type GetCells = (Array<number>, BoardType) => Maybe<Array<CellType>>
 export const getCells: GetCells = (selection, board) => {
   const flattened = toFlatList(board)
@@ -54,4 +57,14 @@ export const getCells: GetCells = (selection, board) => {
     return { type: 'Just', result: cells }
   }
   return { type: 'Nothing' }
+}
+
+type ValidateRow = (Maybe<Array<CellType>>) => Player | null
+const validateRow: ValidateRow = row => {
+  if (row.type === 'Nothing') return null
+  const [cell1, cell2, cell3] = row.result
+  if (cell1.type === cell2.type && cell1.type === cell3.type) {
+    return cell1.type === 'Cross' ? Player1 : Player2
+  }
+  return null
 }

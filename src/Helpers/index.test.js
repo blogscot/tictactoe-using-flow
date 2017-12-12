@@ -1,5 +1,7 @@
 // @flow
 
+import { Player1, Player2 } from '../Constants'
+
 import {
   isCellEmpty,
   updateCell,
@@ -26,7 +28,7 @@ it('Empty cells are empty', () => {
 })
 
 it('An updated cell is not empty', () => {
-  const player = 0
+  const player = Player1
 
   const updatedBoard = updateCell(emptyBoard, player, 0)
   const firstPosition = updatedBoard[0][0]
@@ -34,9 +36,9 @@ it('An updated cell is not empty', () => {
 })
 
 it('Each player alternates their turn', () => {
-  expect(switchPlayer(0)).toBe(1)
-  expect(switchPlayer(1)).toBe(0)
-  expect(switchPlayer(0)).toBe(1)
+  expect(switchPlayer(Player1)).toBe(Player2)
+  expect(switchPlayer(Player2)).toBe(Player1)
+  expect(switchPlayer(Player1)).toBe(Player2)
 })
 
 it('The game is finished when no empty spaces remain', () => {
