@@ -41,3 +41,17 @@ export const isCellEmpty: IsCellEmpty = (board, index) => {
 type IsFinished = (board: BoardType) => boolean
 export const isFinished: IsFinished = board =>
   toFlatList(board).every(cell => cell.type !== 'Empty')
+
+type GetCells = (Array<number>, BoardType) => Maybe<Array<CellType>>
+export const getCells: GetCells = (selection, board) => {
+  const flattened = toFlatList(board)
+  const cells = selection.reduce((acc, index) => {
+    const cell = flattened[index]
+    return cell.type !== 'Empty' ? [...acc, cell] : acc
+  }, [])
+
+  if (cells.length === 3 && cells.every(cell => cell.type !== 'Empty')) {
+    return { type: 'Just', result: cells }
+  }
+  return { type: 'Nothing' }
+}

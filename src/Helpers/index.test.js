@@ -1,24 +1,34 @@
 // @flow
 
-import { isCellEmpty, updateCell, switchPlayer, isFinished } from './index'
+import {
+  isCellEmpty,
+  updateCell,
+  switchPlayer,
+  isFinished,
+  getCells,
+} from './index'
 
-let board: BoardType
+const empty: Empty = { type: 'Empty' }
+const cross: Cross = { type: 'Cross' }
+const circle: Circle = { type: 'Circle' }
 
-beforeEach(function() {
-  const empty: Empty = { type: 'Empty' }
-  const emptyRow: Row = [empty, empty, empty]
-  board = [emptyRow, emptyRow, emptyRow]
-})
+const emptyRow: Row = [empty, empty, empty]
+const crossRow: Row = [cross, cross, cross]
+const circleRow: Row = [circle, circle, circle]
+
+const emptyBoard = [emptyRow, emptyRow, emptyRow]
 
 it('Empty cells are empty', () => {
-  const result = board.every((row, index) => isCellEmpty(board, index))
+  const result = emptyBoard.every((row, index) =>
+    isCellEmpty(emptyBoard, index)
+  )
   expect(result).toBe(true)
 })
 
 it('An updated cell is not empty', () => {
   const player = 0
 
-  const updatedBoard = updateCell(board, player, 0)
+  const updatedBoard = updateCell(emptyBoard, player, 0)
   const firstPosition = updatedBoard[0][0]
   expect(firstPosition.type).toBe('Cross')
 })
@@ -30,10 +40,22 @@ it('Each player alternates their turn', () => {
 })
 
 it('The game is finished when no empty spaces remain', () => {
-  const cross: Cross = { type: 'Cross' }
-  const crossRow: Row = [cross, cross, cross]
   const fullBoard: BoardType = [crossRow, crossRow, crossRow]
 
-  expect(isFinished(board)).toBe(false)
+  expect(isFinished(emptyBoard)).toBe(false)
   expect(isFinished(fullBoard)).toBe(true)
+})
+
+it('getCells returns no Nothing with a empty board', () => {
+  const result = getCells([0, 1, 2], emptyBoard)
+  expect(result.type).toBe('Nothing')
+})
+
+it('getCells returns a Maybe with a full board', () => {
+  const fullBoard: BoardType = [crossRow, crossRow, crossRow]
+
+  const result: Maybe<Array<CellType>> = getCells([0, 4, 8], fullBoard)
+  expect(result.type).toBe('Just')
+  expect(result.result.length).toBe(3)
+  expect(result.result).toEqual(crossRow)
 })
