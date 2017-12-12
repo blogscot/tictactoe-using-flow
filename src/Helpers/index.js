@@ -1,6 +1,11 @@
 // @flow
 import { Player1, Player2 } from '../Constants'
 
+const Nothing: Object = { type: 'Nothing' }
+const _Just: JustType = value => {
+  return { type: 'Just', result: value }
+}
+
 type SwitchPlayer = Player => Player
 export const switchPlayer: SwitchPlayer = player =>
   player === Player1 ? Player2 : Player1
@@ -54,17 +59,69 @@ export const getCells: GetCells = (selection, board) => {
   }, [])
 
   if (cells.length === 3 && cells.every(cell => cell.type !== 'Empty')) {
-    return { type: 'Just', result: cells }
+    return _Just(cells)
   }
-  return { type: 'Nothing' }
+  return Nothing
 }
 
-type ValidateRow = (Maybe<Array<CellType>>) => Player | null
-const validateRow: ValidateRow = row => {
-  if (row.type === 'Nothing') return null
-  const [cell1, cell2, cell3] = row.result
-  if (cell1.type === cell2.type && cell1.type === cell3.type) {
-    return cell1.type === 'Cross' ? Player1 : Player2
+// Search the given 'row' for a match, if found the player is returned
+type FindMatch = (Maybe<Array<CellType>>) => Maybe<Player>
+const findMatch: FindMatch = row => {
+  switch (row.type) {
+    case 'Nothing':
+      return Nothing
+    case 'Just':
+      const [cell1, cell2, cell3] = row.result
+      if (cell1.type === cell2.type && cell1.type === cell3.type) {
+        const player = cell1.type === 'Cross' ? Player1 : Player2
+        return _Just(player)
+      }
+      return Nothing
+    default:
+      return Nothing
   }
-  return null
+}
+
+type IsWinner = BoardType => Maybe<[Player, Array<CellType>]>
+const isWinner: IsWinner = (board, player) => {
+  const row1 = [0, 1, 2]
+  const row2 = [3, 4, 5]
+  const row3 = [6, 7, 8]
+  const col1 = [0, 3, 6]
+  const col2 = [1, 4, 7]
+  const col3 = [2, 5, 8]
+  const diag1 = [0, 4, 8]
+  const diag2 = [2, 4, 6]
+  const rows: Array<Array<number>> = [
+    row1,
+    row2,
+    row3,
+    col1,
+    col2,
+    col3,
+    diag1,
+    diag2,
+  ]
+
+  const result = rows.reduce((isFound, indices) => {
+    if (isFound) return isFound
+    const row = getCells(indices, board)
+    switch (row.type) {
+      case 'Nothing':
+        return false
+      case 'Just':
+        const match = findMatch(row)
+        switch (match.type) {
+          case 'Nothing':
+            return Nothing
+          case 'Just':
+            return _Just([match.result, row.result])
+          default:
+            return Nothing
+        }
+      default:
+        return Nothing
+    }
+  }, false)
+  return result ? result : Nothing
 }

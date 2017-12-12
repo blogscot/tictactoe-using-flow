@@ -15,6 +15,8 @@ declare type BoardIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
 declare type Player = 0 | 1
 
 declare type Just<A> = { type: 'Just', result: A }
+declare type JustType = (any) => Just<any>
+
 declare type Nothing = { type: 'Nothing' }
 declare type Maybe<A> = Just<A> | Nothing
 
