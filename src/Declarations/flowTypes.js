@@ -23,5 +23,3 @@ declare type Result = Maybe<[Player, Row]>
 declare type Status = Result | { type: 'Running' }
 
 declare type State = { board: BoardType, player: Player, status: Status }
-
-declare type IsFinished = (board: BoardType) => boolean

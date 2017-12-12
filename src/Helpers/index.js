@@ -1,20 +1,22 @@
 // @flow
 
-export const switchPlayer: Player => Player = player => (player === 0 ? 1 : 0)
+type SwitchPlayer = Player => Player
+export const switchPlayer: SwitchPlayer = player => (player === 0 ? 1 : 0)
 
-const toFlatList: (list: BoardType) => Array<CellType> = list =>
+type ToFlatList = (list: BoardType) => Array<CellType>
+const toFlatList: ToFlatList = list =>
   list.reduce((acc, cell) => acc.concat(cell), [])
 
-const toBoard: (Array<CellType>) => BoardType = (
-  [c1, c2, c3, c4, c5, c6, c7, c8, c9]
-) => [[c1, c2, c3], [c4, c5, c6], [c7, c8, c9]]
+type ToBoard = (Array<CellType>) => BoardType
+const toBoard: ToBoard = ([c1, c2, c3, c4, c5, c6, c7, c8, c9]) => [
+  [c1, c2, c3],
+  [c4, c5, c6],
+  [c7, c8, c9],
+]
 
 // Assumes Player 0 is 'X', and Player 1 is 'O'
-export const updateCell = (
-  board: BoardType,
-  player: Player,
-  index: BoardIndex
-): BoardType => {
+type UpdateCell = (BoardType, Player, BoardIndex) => BoardType
+export const updateCell: UpdateCell = (board, player, index) => {
   const cells = toFlatList(board)
   const cell = cells[index]
   if (cell && cell.type === 'Empty') {
@@ -29,11 +31,13 @@ export const updateCell = (
   return board
 }
 // Returns true when the cell at the given index in empty
-export const isCellEmpty = (board: BoardType, index: BoardIndex): boolean => {
+type IsCellEmpty = (BoardType, BoardIndex) => boolean
+export const isCellEmpty: IsCellEmpty = (board, index) => {
   const list = toFlatList(board)
   return list[index].type === 'Empty'
 }
 
 // Is the game finished?
+type IsFinished = (board: BoardType) => boolean
 export const isFinished: IsFinished = board =>
   toFlatList(board).every(cell => cell.type !== 'Empty')
