@@ -56,7 +56,10 @@ it('getCells returns no Nothing with a empty board', () => {
 it('getCells returns a Maybe with a full board', () => {
   const fullBoard: BoardType = [crossRow, crossRow, crossRow]
 
-  const result: Maybe<Array<CellType>> = getCells([0, 4, 8], fullBoard)
+  let result: Maybe<Array<CellType>> = getCells([0, 4, 8], fullBoard)
+
+  result = ((result: any): Just<Array<CellType>>) // fix type warning
+
   expect(result.type).toBe('Just')
   expect(result.result.length).toBe(3)
   expect(result.result).toEqual(crossRow)

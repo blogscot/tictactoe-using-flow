@@ -3,6 +3,7 @@
 import React from 'react'
 import Board from './Board'
 import { switchPlayer, updateCell, isCellEmpty } from './Helpers'
+import { player1 } from './Constants'
 import './TicTacToe.css'
 
 const empty: Empty = { type: 'Empty' }
@@ -13,7 +14,7 @@ class TicTacToe extends React.Component<*, State> {
   state = {
     board: board,
     status: { type: 'Running' },
-    player: 0,
+    player: player1,
   }
   setCell = (index: BoardIndex): void => {
     this.setState(state => {

@@ -38,7 +38,7 @@ export const updateCell: UpdateCell = (board, player, index) => {
   return board
 }
 // Returns true when the cell at the given index in empty
-type IsCellEmpty = (BoardType, BoardIndex) => boolean
+type IsCellEmpty = (BoardType, number) => boolean
 export const isCellEmpty: IsCellEmpty = (board, index) => {
   const list = toFlatList(board)
   return list[index].type === 'Empty'
