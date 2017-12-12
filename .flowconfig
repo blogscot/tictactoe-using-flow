@@ -1,0 +1,14 @@
+[ignore]
+
+[include]
+
+[libs]
+
+src/Declarations
+flow-typed/npm/jasmine_v2.4.x.js
+
+[lints]
+
+[options]
+
+[strict]
