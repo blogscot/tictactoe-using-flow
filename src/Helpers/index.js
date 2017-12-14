@@ -66,7 +66,7 @@ export const getCells: GetCells = (selection, board) => {
 
 // Search the given 'row' for a match, if found the player is returned
 type FindMatch = (Maybe<Array<CellType>>) => Maybe<Player>
-const findMatch: FindMatch = row => {
+export const findMatch: FindMatch = row => {
   switch (row.type) {
     case 'Nothing':
       return Nothing
@@ -83,7 +83,7 @@ const findMatch: FindMatch = row => {
 }
 
 type IsWinner = BoardType => Maybe<[Player, Array<CellType>]>
-const isWinner: IsWinner = (board, player) => {
+export const isWinner: IsWinner = (board, player) => {
   const row1 = [0, 1, 2]
   const row2 = [3, 4, 5]
   const row3 = [6, 7, 8]
@@ -103,25 +103,18 @@ const isWinner: IsWinner = (board, player) => {
     diag2,
   ]
 
-  const result = rows.reduce((isFound, indices) => {
-    if (isFound) return isFound
-    const row = getCells(indices, board)
-    switch (row.type) {
-      case 'Nothing':
-        return false
-      case 'Just':
-        const match = findMatch(row)
-        switch (match.type) {
-          case 'Nothing':
-            return Nothing
-          case 'Just':
-            return _Just([match.result, row.result])
-          default:
-            return Nothing
-        }
-      default:
-        return Nothing
+  return rows.reduce((acc, indices) => {
+    // Short circuit the search if a match is found
+    if (acc.type !== 'Nothing') {
+      return acc
     }
-  }, false)
-  return result ? result : Nothing
+    const row = getCells(indices, board)
+    if (row.type !== 'Nothing') {
+      const match = findMatch(row)
+      if (match.type !== 'Nothing') {
+        return _Just([match.result, row.result])
+      }
+    }
+    return Nothing
+  }, Nothing)
 }
