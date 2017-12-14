@@ -20,7 +20,7 @@ declare type JustType = (any) => Just<any>
 declare type Nothing = { type: 'Nothing' }
 declare type Maybe<A> = Just<A> | Nothing
 
-declare type Result = Maybe<[Player, Row]>
+declare type Result = Maybe<{ player: Player, row: Array<CellType> }>
 
 declare type Status = Result | { type: 'Running' }
 

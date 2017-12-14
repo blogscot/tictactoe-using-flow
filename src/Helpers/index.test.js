@@ -12,6 +12,7 @@ import {
   isWinner,
 } from './index'
 
+// Global constants
 const empty: Empty = { type: 'Empty' }
 const cross: Cross = { type: 'Cross' }
 const circle: Circle = { type: 'Circle' }
@@ -34,6 +35,7 @@ const winningBoard2 = [
   [circle, empty, cross],
 ]
 
+// Test Suite
 it('Empty cells are empty', () => {
   const result = emptyBoard.every((row, index) =>
     isCellEmpty(emptyBoard, index)
@@ -136,28 +138,31 @@ it('An empty board has no winner', () => {
 it('A board with a line has a winner', () => {
   let result = isWinner(winningBoard1)
 
-  result = ((result: any): Just<Array<CellType>>) // fix type warning
+  // fix type warning
+  result = ((result: any): Just<{ player: Player, row: Array<CellType> }>)
 
   expect(result.type).toBe('Just')
-  expect(result.result[0]).toBe(Player1)
+  expect(result.result.player).toBe(Player1)
 })
 
 it('A board with a vertical line has a winner', () => {
   let result = isWinner(winningBoard1)
 
-  result = ((result: any): Just<Array<CellType>>) // fix type warning
+  // fix type warning
+  result = ((result: any): Just<{ player: Player, row: Array<CellType> }>)
 
   expect(result.type).toBe('Just')
-  expect(result.result[0]).toBe(Player1)
-  expect(result.result[1]).toEqual(crossRow)
+  expect(result.result.player).toBe(Player1)
+  expect(result.result.row).toEqual(crossRow)
 })
 
 it('A board with a diagonal line has a winner', () => {
   let result = isWinner(winningBoard2)
 
-  result = ((result: any): Just<Array<CellType>>) // fix type warning
+  // fix type warning
+  result = ((result: any): Just<{ player: Player, row: Array<CellType> }>)
 
   expect(result.type).toBe('Just')
-  expect(result.result[0]).toBe(Player2)
-  expect(result.result[1]).toEqual(circleRow)
+  expect(result.result.player).toBe(Player2)
+  expect(result.result.row).toEqual(circleRow)
 })

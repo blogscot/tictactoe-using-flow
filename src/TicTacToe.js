@@ -2,8 +2,14 @@
 
 import React from 'react'
 import Board from './Board'
-import { switchPlayer, updateCell, isCellEmpty } from './Helpers'
-import { player1 } from './Constants'
+import {
+  switchPlayer,
+  updateCell,
+  isCellEmpty,
+  isFinished,
+  isWinner,
+} from './Helpers'
+import { Player1 } from './Constants'
 import './TicTacToe.css'
 
 const empty: Empty = { type: 'Empty' }
@@ -14,17 +20,30 @@ class TicTacToe extends React.Component<*, State> {
   state = {
     board: board,
     status: { type: 'Running' },
-    player: player1,
+    player: Player1,
   }
   setCell = (index: BoardIndex): void => {
-    this.setState(state => {
-      const { board, player } = state
-      return isCellEmpty(board, index)
-        ? {
-            player: switchPlayer(player),
-            board: updateCell(board, player, index),
-          }
-        : {}
+    this.setState(prevState => {
+      const { board, player } = prevState
+      if (!isCellEmpty(board, index)) return prevState
+      const updatedBoard = updateCell(board, player, index)
+      const winner = isWinner(updatedBoard)
+      if (winner.type !== 'Nothing') {
+        return {
+          board: updatedBoard,
+          status: winner,
+        }
+      } else if (isFinished(updatedBoard)) {
+        return {
+          board: updatedBoard,
+          status: { type: 'Nothing' },
+        }
+      } else {
+        return {
+          board: updatedBoard,
+          player: switchPlayer(player),
+        }
+      }
     })
   }
   render() {
